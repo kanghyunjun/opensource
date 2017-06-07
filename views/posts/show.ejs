@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <% include ../partials/head %>
+  </head>
+  <body>
+    <header>
+      <% include ../partials/header %>
+    </header>
+    <div class="posts">
+    <% include partials/top %>
+<div class="show">
+  <div class="buttons floats">
+    <% if(user && user.equals(post.author._id)) { %>
+      <form class="float_right" action="/posts/<%= post._id + urlQuery("?") %>&_method=delete" method="post">
+        <input class="button" type="button" value="삭제" onclick="confirm('게시글이 삭제됩니다.')?this.parentElement.submit():null;">
+      </form>
+      <a class="button float_right" href="/posts/<%= post._id %>/edit<%= urlQuery('?') %>">수정</a>
+    <% } %>
+    <a class="button float_left" href="/posts<%= urlQuery('?') %>">이전으로</a>
+  </div>
+  <h3>
+    <%= post.numId %>.
+    <span class="highlight" data-highlight="<%= search.highlight.title %>">
+      <%= post.title %>
+    </span>
+  </h3>
+  <div class="content floats">
+    <div class="info float_right">
+      <div class="highlight" data-highlight="<%= search.highlight.author %>">
+        작성자 : <%= post.author.nickname %>
+      </div>
+      <div>
+        <%= post.views %> 조회
+      </div>
+      <div class="timestamp">
+        <div class="createdAt">
+          <span>작성일 :</span> <%= post.getFormattedDate(post.createdAt) %>, <%= post.getFormattedTime(post.createdAt) %>
+        </div>
+        <% if(post.updatedAt) { %>
+          <div class="updatedAt">
+          <span>Updated:</span> <%= post.getFormattedDate(post.updatedAt) %>, <%= post.getFormattedTime(post.updatedAt) %>
+          </div>
+        <% } %>
+      </div>
+    </div>
+    <div class="body highlight" data-highlight="<%= search.highlight.body %>"><%= post.body %></div>
+    <div class="comments">
+      <h4>댓글 (<%= post.comments?post.comments.length:"0" %>)</h4>
+      <% if(post.comments) { %>
+        <% post.comments.forEach(function(comment){ %>
+          <div class="comment">
+            <div class="top">
+              <b><%= comment.author.nickname %></b>
+              (<%= post.getFormattedDate(comment.createdAt) %>,
+              <%= post.getFormattedTime(comment.createdAt) %>)
+              <% if(user && user.equals(comment.author._id)) { %>
+
+              <% } %>
+            </div>
+            <div class="body"><%= comment.body %></div>
+          </div>
+        <% }) %>
+      <% } %>
+      <form class="addComment checkValidation"
+        action="/posts/<%=post._id%>/comments<%= urlQuery('?') %>" method="post">
+        <textarea class="cvRequired" type="text" name="comment[body]"
+          cvRqErrMsg="comments is empty." cvRqErrTo="#cvErrTitle" <%= user?"":"disabled" %>
+          placeholder="<%= user?"여기에 입력해 주세요":"댓글을 달려면 먼저 로그인해 주세요" %>"></textarea>
+        <input class="button" type="submit" value="댓글 달기"<%= user?"":"disabled" %>>
+        <div id="cvErrTitle" class="message"></div>
+      </form>
+    </div>
+  </div>
+</div>
+    </div>
+    <footer>
+      <% include ../partials/footer %>
+    </footer>
+  </body>
+</html>

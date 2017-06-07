@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <% include ../partials/head %>
+  </head>
+  <body>
+    <header>
+      <% include ../partials/header %>
+    </header>
+    <div class="posts">
+    <% include partials/top %>
+<% query = urlQuery('?') %>
+<div class="index">
+<div class="message">
+  <%= postsMessage %>
+</div>
+  <div class="buttons">
+    <a class="button float_left" href="/posts/new<%= urlQuery('?') %>">새 글</a>
+    <% if(user) {%>
+      <a class="button float_right" href="/chatting">채팅</a>
+      <a class="button float_right" href="/logout">로그아웃</a>
+      <a>내 아이디(<%= user.nickname %>)</a>
+    <% } else { %>
+      <a class="button float_right" href="/login">로그인</a>
+      <a class="button float_right" href="/users/new">회원가입</a>
+    <% } %>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th class="num">번호</th>
+        <th class="title">제목</th>
+        <th class="views">조회수</th>
+        <th class="author">작성자</th>
+        <th class="date">날짜</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if(posts == null || posts.length == 0){ %>
+          <tr class="noData">
+            <td colspan="5">작성된 글이 없습니다.</td>
+          </tr>
+      <% } %>
+      <% posts.forEach(function(post){ %>
+        <tr>
+          <td class="num"><%= post.numId %></td>
+          <td class="title">
+            <a href="/posts/<%= post._id + query %>">
+              <span class="highlight" data-highlight="<%= search.highlight.title %>"><%= post.title %>
+              <span class="comments">(<%= post.comments.length %>)</span>
+            </a>
+          </td>
+          <td class="views"><%= post.views %></td>
+          <td class="author highlight" data-highlight="<%= search.highlight.author %>"><%= post.author.nickname %></td>
+          <td class="date"><%= post.getFormattedDate(post.createdAt) %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+
+    </div>
+    <footer>
+      <% include ../partials/footer %>
+    </footer>
+  </body>
+</html>
