@@ -58,6 +58,64 @@
     </tbody>
   </table>
 
+  <ul class="pagination">
+      <%
+        var offset = 3;
+        var partialQuery = urlQuery("&",["page"]);
+      %>
+      <% for(i=1;i<=maxPage;i++){ %>
+        <% if(i<=offset || i>maxPage-offset || (i>=page-(offset-1) && i<=page+(offset-1))){ %>
+          <% if(i != page){ %>
+            <li>[<a href="/posts?page=<%= i %><%= partialQuery %>"> <%= i %> </a>]</li>
+          <% } else { %>
+            <li>[ <b><%= i %></b> ]</li>
+          <% } %>
+        <% } else if(i == offset+1 || i == maxPage-offset){ %>
+            <li>...</li>
+        <% } %>
+      <%}%>
+    </ul>
+    <div class="floats">
+      <div class="counter float_left">
+        <% if(counter){ %>
+          Total <%= counter.totalCount %> visitors<br>
+          (today: <%= counter.todayCount %>)
+        <% } %>
+      </div>
+      <div class="search float_right">
+        <form class="checkValidation" action="/posts/" id="search">
+          <select name="searchType" <%= search.searchType=="author!"?"disabled":"" %>>
+            <% var select %>
+            <option value="title,body"
+              <%= search.searchType=="title,body"?select="selected":"" %>>제목+본문</option>
+            <option value="title"
+              <%= search.searchType=="title"?select="selected":"" %>>제목</option>
+            <option value="body"
+              <%= search.searchType=="body"?select="selected":"" %>>본문</option>
+            <%if(search.searchType=="author!"){%>
+              <option value="author!"
+                <%= search.searchType=="author!"?select="selected":"" %>>작성자</option>
+            <%} else {%>
+              <option value="author"
+                <%= search.searchType=="author"?select="selected":"" %>>작성자</option>
+            <%}%>
+          </select>
+          <input class="cvMinLength" cvMinLength="3"
+            cvMinLenErrTo="#searchError"
+            cvMinLenErrMsg="It should be at least 3 characters"
+            type="text" name="searchText" value="<%= select?search.searchText:"" %>"
+            <%= search.searchType=="author!"?"disabled":"" %>>
+          <input class="button" type="submit"  value="검색"<%= search.searchType=="author!"?"disabled":"" %>>
+          <%if(search.searchType){%>
+            <a class="button" href="/posts?page=1">cancel</a>
+          <%}%>
+          <div class="message" id="searchError"></div>
+        </form>
+      </div>
+    </div>
+
+
+
     </div>
     <footer>
       <% include ../partials/footer %>
